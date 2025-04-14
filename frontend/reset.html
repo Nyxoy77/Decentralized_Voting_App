@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reset Election</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h2>🗳️ Start a New Election</h2>
+    <form id="candidate-form">
+        <div id="candidate-fields">
+            <input type="text" name="candidate" placeholder="Candidate 1" required />
+        </div>
+        <button type="button" onclick="addCandidateField()">➕ Add More</button>
+        <br /><br />
+        <button type="submit">Start Election</button>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="abi.js"></script>
+    <script src="js/web3Config.js"></script>
+    <script>
+        function addCandidateField() {
+            const container = document.getElementById("candidate-fields");
+            const input = document.createElement("input");
+            input.type = "text";
+            input.name = "candidate";
+            input.placeholder = "Another Candidate";
+            input.required = true;
+            container.appendChild(document.createElement("br"));
+            container.appendChild(input);
+        }
+        document.getElementById("candidate-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const { contract, account } = await initWeb3();
+
+            const inputs = document.getElementsByName("candidate");
+            const names = Array.from(inputs).map(input => input.value.trim()).filter(v => v !== "");
+
+            if (names.length < 1) {
+                alert("Please enter at least one candidate.");
+                return;
+            }
+
+            try {
+                // Call the resetElection function to reset with new candidates
+                await contract.methods.resetElection(names).send({ from: account });
+                alert("Election reset successfully with new candidates!");
+                window.location.href = "index.html"; // Redirect back to main page
+            } catch (err) {
+                alert("Error resetting election: " + err.message);
+            }
+        });
+    </script>
+</body>
+
+</html>
