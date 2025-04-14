@@ -14,7 +14,7 @@ window.addEventListener('load', async () => {
     const deployedNetwork = contractJson.networks[networkId];
 
     if (!deployedNetwork) {
-      alert("Contract not found on this network. Check Ganache and Truffle migration.");
+      showCustomAlert("Contract not found on this network. Check Ganache and Truffle migration.");
       return;
     }
 
@@ -29,9 +29,19 @@ window.addEventListener('load', async () => {
 
     loadCandidates();
   } else {
-    alert("Please install MetaMask to use this DApp.");
+    showCustomAlert("Please install MetaMask to use this DApp.");
   }
 });
+
+function showCustomAlert(message) {
+  document.getElementById('alertMessage').textContent = message;
+  document.getElementById('customAlert').style.display = 'block';
+}
+
+document.getElementById('closeAlert').onclick = function() {
+  document.getElementById('customAlert').style.display = 'none';
+}
+
 
 async function loadCandidates() {
   const count = await contract.methods.candidateListLength().call();
@@ -53,41 +63,41 @@ async function loadCandidates() {
 
 async function vote(name) {
   await contract.methods.voteForCandidate(name).send({ from: accounts[0] });
-  alert(`Voted for ${name}!`);
+  showCustomAlert(`Voted for ${name}!`);
   loadCandidates();
 }
 
 async function endVoting() {
-  if (!contract) return alert("Contract not loaded!");
+  if (!contract) return showCustomAlert("Contract not loaded!");
   try {
     await contract.methods.endVoting().send({ from: accounts[0] });
     const winner = await contract.methods.getWinner().call();
-    alert(`Voting ended. Winner: ${winner}`);
+    showCustomAlert(`Voting ended. Winner: ${winner}`);
   } catch (err) {
     console.error(err);
-    alert("Error ending voting.");
+    showCustomAlert("Error ending voting.");
   }
 }
 
 async function resetElection() {
-  if (!contract) return alert("Contract not loaded!");
+  if (!contract) return showCustomAlert("Contract not loaded!");
 
   const inputF = document.getElementById("newCandidates");
   const input = inputF.value;
   const newCandidates = input.split(',').map(name => name.trim()).filter(name => name !== "");
 
   if (newCandidates.length === 0) {
-    return alert("Please enter at least one candidate name.");
+    return showCustomAlert("Please enter at least one candidate name.");
   }
 
   try {
     await contract.methods.resetElection(newCandidates).send({ from: accounts[0] });
-    alert("Election has been reset!");
+    showCustomAlert("Election has been reset!");
     inputF.value = "";
     loadCandidates(); // Refresh the candidate list
   } catch (err) {
     console.error(err);
-    alert("Error resetting election.");
+    showCustomAlert("Error resetting election.");
   }
 }
 
