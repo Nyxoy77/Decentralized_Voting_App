@@ -92,4 +92,8 @@ contract Voting {
     function candidateListLength() public view returns (uint256) {
         return candidateList.length;
     }
+
+    function isVotingOngoing() public view returns (bool) {
+        return !votingEnded;
+    }
 }
