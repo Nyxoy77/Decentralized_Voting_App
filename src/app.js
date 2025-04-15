@@ -2,6 +2,7 @@ let web3;
 let contract;
 let accounts;
 
+
 window.addEventListener('load', async () => {
   if (window.ethereum) {
     web3 = new Web3(window.ethereum);
@@ -35,7 +36,7 @@ window.addEventListener('load', async () => {
 
 function showCustomAlert(message) {
   document.getElementById('alertMessage').textContent = message;
-  document.getElementById('customAlert').style.display = 'block';
+  document.getElementById('customAlert').style.display = 'flex';
 }
 
 document.getElementById('closeAlert').onclick = function() {
